@@ -6,11 +6,14 @@ from PIL import Image, ImageOps
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "assets" / "Techglam images"
+NEW = ROOT / "assets" / "new"
 OPTIMIZED = ROOT / "assets" / "optimized"
 
 
-def optimized(path):
-    target = (OPTIMIZED / path.relative_to(SOURCE)).with_suffix(".webp")
+def optimized(path, source=SOURCE):
+    target = (OPTIMIZED / path.relative_to(source)).with_suffix(".webp")
+    if source == NEW:
+        target = OPTIMIZED / "new" / target.name
     if not target.exists() or target.stat().st_mtime < path.stat().st_mtime:
         target.parent.mkdir(parents=True, exist_ok=True)
         with Image.open(path) as original:
@@ -35,7 +38,7 @@ def numbered_files(folder):
 
 images = {
     "brand": {
-        "logo": photos("Logo")[0],
+        "logo": optimized(NEW / "nova_logo.jpeg", NEW),
         "lila": photos("Lila Glam"),
     },
     "products": {
@@ -54,11 +57,11 @@ images = {
         ], start=1)},
         "kit-esponjas": photos("ESPONJINHAS DE MAQUIAGEM"),
         "kit-pinceis": photos("KIT DE PINCÉIS "),
-        "maquina-glamix": [photos("GLAMIX/GLAMIX")[0], photos("GLAMIX/GLAMIX")[1]],
+        "maquina-glamix": [optimized(NEW / "nova_glamix.jpeg", NEW), photos("GLAMIX/GLAMIX")[1]],
         "kit-cartuchos": [photos("GLAMIX/CARTUCHOS ")[5]],
     },
     "glamix": {
-        "open": photos("GLAMIX/GLAMIX")[0],
+        "open": optimized(NEW / "nova_glamix.jpeg", NEW),
         "closed": photos("GLAMIX/GLAMIX")[1],
         "cartridges": photos("GLAMIX/CARTUCHOS ")[5],
     },

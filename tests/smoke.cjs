@@ -6,11 +6,12 @@ const sandbox={console,Date,Math,Number,String,Array,JSON,RegExp,URLSearchParams
 vm.createContext(sandbox);const app=fs.readFileSync(base+'app.js','utf8').replace(/\}\)\(\);\s*$/,'globalThis.TEST={db,ui,addToCart,totals,account,favorite,handleSubmit,handleClick,goto,render,itemById};})();');vm.runInContext(fs.readFileSync(base+'assets/real-images.js','utf8')+'\n'+fs.readFileSync(base+'data.js','utf8')+'\n'+app,sandbox);const T=sandbox.TEST;
 for(const route of ['inicio','catalogo','glamix','produto/lip-gloss','produto/maquina-glamix','lila','sobre','contato','carrinho','favoritos','checkout','login','conta']){url='#'+route;T.render(false);assert(nodes['#app'].innerHTML.includes('<main'),'Falha na rota '+route);}
 assert(nodes['#app'].innerHTML.includes('Minha conta'));
-url='#inicio';T.render(false);assert(nodes['#app'].innerHTML.includes('glamix-home-title'),'home Glamix section');
-url='#glamix';T.render(false);assert(nodes['#app'].innerHTML.includes('1.650,00'),'Glamix price');assert(nodes['#app'].innerHTML.toLowerCase().includes('cinco cartuchos inclusos'));assert(nodes['#app'].innerHTML.includes('glamix-hotspot'));
+url='#inicio';T.render(false);assert(nodes['#app'].innerHTML.includes('glamix-home-title'),'home Glamix section');assert.strictEqual((nodes['#app'].innerHTML.match(/data-action="glamix-part"/g)||[]).length,4,'quatro pontos na foto da página inicial');
+url='#glamix';T.render(false);assert(nodes['#app'].innerHTML.includes('1.650,00'),'Glamix price');assert(nodes['#app'].innerHTML.toLowerCase().includes('cinco cartuchos inclusos'));assert.strictEqual((nodes['#app'].innerHTML.match(/data-action="glamix-part"/g)||[]).length,8,'quatro pontos em cada foto interativa da página Glamix');
 const click=(action,dataset)=>T.handleClick({target:{dataset:{action,...dataset},closest(selector){return selector==='[data-action]'?this:null;}}});
 click('glamix-step',{step:'4'});assert.strictEqual(T.ui.glamixStep,4);assert(nodes['#app'].innerHTML.includes('Aplique com praticidade'));
 click('glamix-part',{part:'espelho'});assert.strictEqual(T.ui.glamixPart,'espelho');assert(nodes['#app'].innerHTML.includes('Espelho e pincel integrados'));
+for(const [part,title] of [['saida','Saída inferior'],['recipiente','Recipiente portátil']]){click('glamix-part',{part});assert.strictEqual(T.ui.glamixPart,part);assert(nodes['#app'].innerHTML.includes(`<h3>${title}</h3>`));}
 
 url='#catalogo';T.render(false);assert(nodes['#app'].innerHTML.includes('11</strong> produtos encontrados'));
 T.ui.filters.maxPrice=2000;T.ui.filters.search='Rainbow';T.render(false);assert(nodes['#app'].innerHTML.includes('1</strong> produtos encontrados'));
