@@ -99,7 +99,7 @@
 
 /* Supplied TechGlam photography */
 .brand-mark{overflow:hidden;border-radius:8px;background:#e8d5f2}
-.brand-mark img{display:block;width:100%;height:100%;object-fit:contain;transform:scale(1.65);object-position:center}
+.brand-mark img{display:block;width:100%;height:100%;object-fit:contain;transform:translateY(2px) scale(1.65);object-position:center}
 .footer .brand-mark{background:#e8d5f2}
 .hero-model{width:545px;height:545px;object-fit:cover;border-radius:43% 43% 0 0;bottom:0;filter:none}
 .lila-art img{height:355px;width:355px;object-fit:cover;object-position:center 25%;border-radius:50% 50% 0 0;filter:none}
@@ -141,3 +141,21 @@
 
 .glamix-photo-dialog[data-part="saida"] img,
 .glamix-photo-dialog[data-part="recipiente"] img{object-fit:cover;background:#fff}
+
+/* Keep decorative hero lettering off the portrait on small screens. */
+@media(max-width:580px){.hero-circle-word{display:none}}
+
+/* Let the photo upload content shrink and stay centered on narrow screens. */
+.upload-area{grid-template-columns:minmax(0,1fr)}
+.upload-area>*{min-width:0;max-width:100%}
+.upload-area p{width:100%;text-align:center;overflow-wrap:break-word}
+.upload-area input[type="file"]{width:100%;min-width:0}
+@media(max-width:580px){.upload-area{padding:24px 16px}.analysis-controls{flex-direction:column;align-items:stretch;text-align:center}.analysis-controls .btn{width:100%;justify-content:center}}
+
+/* Keep the curved portrait edge clear of the rectangular backdrop on mobile. */
+@media(max-width:580px){.hero-visual .hero-blob{display:none}}
+
+@media(max-width:580px){.hero-visual{height:auto;min-height:0;aspect-ratio:1;margin-top:12px;margin-inline:0}.hero-visual .hero-model{width:100%;height:100%!important;left:50%!important;bottom:0;transform:translateX(-50%);object-position:center;border-radius:43% 43% 0 0}}
+
+/* Align the desktop portrait with the center of the wider purple backdrop. */
+@media(min-width:801px){.hero-visual .hero-model{left:calc(50% + 62.5px);transform:translateX(-50%)}}
