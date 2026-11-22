@@ -8,10 +8,24 @@ for(const route of ['inicio','catalogo','glamix','produto/lip-gloss','produto/ma
 assert(nodes['#app'].innerHTML.includes('Minha conta'));
 url='#inicio';T.render(false);assert(nodes['#app'].innerHTML.includes('glamix-home-title'),'home Glamix section');assert.strictEqual((nodes['#app'].innerHTML.match(/data-action="glamix-part"/g)||[]).length,4,'quatro pontos na foto da página inicial');
 url='#glamix';T.render(false);assert(nodes['#app'].innerHTML.includes('1.650,00'),'Glamix price');assert(nodes['#app'].innerHTML.toLowerCase().includes('cinco cartuchos inclusos'));assert.strictEqual((nodes['#app'].innerHTML.match(/data-action="glamix-part"/g)||[]).length,8,'quatro pontos em cada foto interativa da página Glamix');
-const click=(action,dataset)=>T.handleClick({target:{dataset:{action,...dataset},closest(selector){return selector==='[data-action]'?this:null;}}});
+const click=(action,dataset,insideExplore=false)=>T.handleClick({target:{dataset:{action,...dataset},closest(selector){return selector==='[data-action]'?this:insideExplore&&selector==='.glamix-explore'?{}:null;}}});
+for(const route of ['inicio','glamix']){
+  url='#'+route;T.render(false);
+  click('glamix-part',{part:'espelho'});
+  assert(nodes['#overlay-root'].innerHTML.includes('src="./espelho_glamix.jpeg"'),`foto do espelho incorreta em ${route}`);
+  click('close-glamix-photo',{});
+  for(const [part,file] of [['saida','saida_inferior.webp'],['recipiente','recipiente_portatil.webp']]){
+    click('glamix-part',{part});
+    assert(nodes['#overlay-root'].innerHTML.includes('role="dialog"'),`foto não abriu em ${route}: ${part}`);
+    assert(nodes['#overlay-root'].innerHTML.includes(`src="./assets/optimized/new/${file}"`),`foto incorreta em ${route}: ${part}`);
+    click('close-glamix-photo',{});
+    assert.strictEqual(nodes['#overlay-root'].innerHTML,'',`foto não fechou em ${route}: ${part}`);
+  }
+}
+url='#glamix';T.render(false);
 click('glamix-step',{step:'4'});assert.strictEqual(T.ui.glamixStep,4);assert(nodes['#app'].innerHTML.includes('Aplique com praticidade'));
 click('glamix-part',{part:'espelho'});assert.strictEqual(T.ui.glamixPart,'espelho');assert(nodes['#app'].innerHTML.includes('Espelho e pincel integrados'));
-for(const [part,title] of [['saida','Saída inferior'],['recipiente','Recipiente portátil']]){click('glamix-part',{part});assert.strictEqual(T.ui.glamixPart,part);assert(nodes['#app'].innerHTML.includes(`<h3>${title}</h3>`));}
+for(const [part,title,file] of [['saida','Saída inferior','saida_inferior.webp'],['recipiente','Recipiente portátil','recipiente_portatil.webp']]){click('glamix-part',{part},true);assert.strictEqual(T.ui.glamixPart,part);assert(nodes['#app'].innerHTML.includes(`<h3>${title}</h3>`));assert(nodes['#app'].innerHTML.includes(`src="./assets/optimized/new/${file}" alt="Foto da Glamix: ${title}"`));assert.strictEqual(nodes['#overlay-root'].innerHTML,'');}
 
 url='#catalogo';T.render(false);assert(nodes['#app'].innerHTML.includes('11</strong> produtos encontrados'));
 T.ui.filters.maxPrice=2000;T.ui.filters.search='Rainbow';T.render(false);assert(nodes['#app'].innerHTML.includes('1</strong> produtos encontrados'));

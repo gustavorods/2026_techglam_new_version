@@ -6,9 +6,14 @@ const assert=require('assert');
 const root=path.resolve(__dirname,'..');
 const context={encodeURI};
 vm.createContext(context);
-vm.runInContext(fs.readFileSync(path.join(root,'assets/real-images.js'),'utf8')+'\n'+fs.readFileSync(path.join(root,'data.js'),'utf8')+'\nglobalThis.CATALOG=PRODUCTS',context);
+vm.runInContext(fs.readFileSync(path.join(root,'assets/real-images.js'),'utf8')+'\n'+fs.readFileSync(path.join(root,'data.js'),'utf8')+'\nglobalThis.CATALOG=PRODUCTS;globalThis.GLAMIX_IMAGES=REAL_IMAGES.glamix',context);
 
 const products=context.CATALOG;
+for(const part of ['saida','recipiente']){
+  const image=context.GLAMIX_IMAGES[part];
+  assert(image,`Foto da Glamix ausente no manifesto: ${part}`);
+  assert(fs.existsSync(path.join(root,image.replace(/^\.\//,''))),`Arquivo da Glamix ausente: ${image}`);
+}
 assert.strictEqual(products.length,11);
 assert.deepStrictEqual(Array.from(products.find(p=>p.id==='lip-gloss').variants,v=>v.name),['Rosa Cristal','Pink Intenso','Cereja Suave','Ameixa Suave','Chocolate Mauve','Vinho Elegante']);
 assert.deepStrictEqual(Array.from(products.find(p=>p.id==='lip-oil-fruits').variants,v=>v.name),['Melancia','Mirtilo','Morango','Pêssego','Cereja']);

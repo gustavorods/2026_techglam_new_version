@@ -38,7 +38,7 @@ def numbered_files(folder):
 
 images = {
     "brand": {
-        "logo": optimized(NEW / "nova_logo.jpeg", NEW),
+        "logo": "./Group 26.svg",
         "lila": photos("Lila Glam"),
     },
     "products": {
@@ -61,9 +61,12 @@ images = {
         "kit-cartuchos": [photos("GLAMIX/CARTUCHOS ")[5]],
     },
     "glamix": {
+        "espelho": "./espelho_glamix.jpeg",
         "open": optimized(NEW / "nova_glamix.jpeg", NEW),
         "closed": photos("GLAMIX/GLAMIX")[1],
         "cartridges": photos("GLAMIX/CARTUCHOS ")[5],
+        "saida": optimized(NEW / "saida_inferior.jpeg", NEW),
+        "recipiente": optimized(NEW / "recipiente_portatil.jpeg", NEW),
     },
 }
 
